@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import axios from "axios";
 import Image from "next/image";
+import Link from "next/link";
 
 interface StockDetails {
   ticker: string;
@@ -74,41 +75,43 @@ export default function StockComparison() {
                   </Card>
                 ))
             : stocks.map((stock) => (
-                <Card key={stock.ticker} className="w-full relative">
-                  <div className="absolute top-4 right-4 w-16 h-16 bg-white rounded-md flex items-center justify-center">
-                    <Image
-                      src={`/logos/${stock.ticker}.png`}
-                      alt={`${stock.name} logo`}
-                      width={48}
-                      height={48}
-                      className="object-contain"
-                    />
-                  </div>
-                  <CardHeader>
-                    <CardTitle className="flex justify-between items-center">
-                      <span>{stock.ticker}</span>
-                    </CardTitle>
-                    <p className="text-sm text-muted-foreground">
-                      {stock.name}
-                    </p>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div>
-                        <h3 className="font-semibold text-primary">
-                          Market Cap
-                        </h3>
-                        <p>{formatMarketCap(stock.market_cap)}</p>
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-primary">
-                          Employees
-                        </h3>
-                        <p>{formatEmployees(stock.total_employees)}</p>
-                      </div>
+                <Link href={`/stock/${stock.ticker}`} key={stock.ticker}>
+                  <Card className="w-full relative hover:shadow-lg transition-shadow duration-300">
+                    <div className="absolute top-4 right-4 w-16 h-16 bg-white rounded-md flex items-center justify-center">
+                      <Image
+                        src={`/logos/${stock.ticker}.png`}
+                        alt={`${stock.name} logo`}
+                        width={48}
+                        height={48}
+                        className="object-contain"
+                      />
                     </div>
-                  </CardContent>
-                </Card>
+                    <CardHeader>
+                      <CardTitle className="flex justify-between items-center">
+                        <span>{stock.ticker}</span>
+                      </CardTitle>
+                      <p className="text-sm text-muted-foreground">
+                        {stock.name}
+                      </p>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        <div>
+                          <h3 className="font-semibold text-primary">
+                            Market Cap
+                          </h3>
+                          <p>{formatMarketCap(stock.market_cap)}</p>
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-primary">
+                            Employees
+                          </h3>
+                          <p>{formatEmployees(stock.total_employees)}</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
               ))}
         </div>
       </div>
