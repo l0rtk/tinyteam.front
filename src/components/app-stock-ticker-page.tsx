@@ -20,7 +20,7 @@ interface ApiResponse {
   message: string;
 }
 
-export default function StockDetail() {
+export function Page() {
   const { ticker } = useParams();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
