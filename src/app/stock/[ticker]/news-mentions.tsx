@@ -56,7 +56,7 @@ export default function NewsPage() {
       ? `${ticker},${additionalTickers}`
       : ticker;
 
-    const wsUrl = `ws://13.60.224.198/:8000/news/ws/ticker_news?tickers=${tickers}&limit=${limit}`;
+    const wsUrl = `ws://13.60.224.198:8000/news/ws/ticker_news?tickers=${tickers}&limit=${limit}`;
     const ws = new WebSocket(wsUrl);
 
     ws.onopen = () => {
