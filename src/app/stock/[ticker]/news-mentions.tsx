@@ -215,11 +215,7 @@ export default function NewsPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-gray-100">
       <div className="container mx-auto p-4">
-        <Card className="w-full mb-4 bg-[#1a1a1a] border-gray-700">
-          <CardContent className="flex items-center justify-between p-6">
-            <h1 className="text-3xl font-bold text-white">Latest News</h1>
-          </CardContent>
-        </Card>
+        <Card className="w-full mb-4 bg-[#1a1a1a] border-gray-700"></Card>
         <Card className="bg-[#1a1a1a] border-gray-700">
           <CardContent>
             <ul className="space-y-4">{renderNewsArticles()}</ul>

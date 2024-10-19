@@ -2,17 +2,39 @@
 
 import { useState } from "react";
 import { useParams } from "next/navigation";
+import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import SentimentChart from "./sentiment-chart";
 import SentimentPieChart from "./sentiment-pie-chart";
 import RedditMentions from "./reddit-mentions";
-// import { NewsMentions } from "./news-mentions";
 import NewsPage from "./news-mentions";
+import TradingCopilot from "./trading-copilot";
 
 export default function StockDetail() {
   const { ticker } = useParams();
   const [activeTab, setActiveTab] = useState("reddit");
+
+  const TabButton = ({
+    tab,
+    label,
+    children,
+  }: {
+    tab: string;
+    label: string;
+    children?: React.ReactNode;
+  }) => (
+    <button
+      onClick={() => setActiveTab(tab)}
+      className={`px-4 py-2 rounded-t-lg ${
+        activeTab === tab
+          ? "bg-primary text-primary-foreground"
+          : "bg-secondary text-secondary-foreground hover:bg-secondary/90"
+      }`}
+    >
+      {children || label}
+    </button>
+  );
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -24,32 +46,26 @@ export default function StockDetail() {
           &larr; Back to Comparison
         </Link>
         <Card className="w-full mb-4">
-          <CardContent className="flex items-center justify-center p-6">
+          <CardContent className="flex items-center justify-between p-6">
             <h1 className="text-4xl font-bold text-primary">{ticker}</h1>
+            <div className="flex items-center space-x-4"></div>
           </CardContent>
         </Card>
         <div className="mb-4">
           <div className="flex space-x-2">
-            <button
-              onClick={() => setActiveTab("reddit")}
-              className={`px-4 py-2 rounded-t-lg ${
-                activeTab === "reddit"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-secondary text-secondary-foreground hover:bg-secondary/90"
-              }`}
-            >
-              Reddit
-            </button>
-            <button
-              onClick={() => setActiveTab("news")}
-              className={`px-4 py-2 rounded-t-lg ${
-                activeTab === "news"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-secondary text-secondary-foreground hover:bg-secondary/90"
-              }`}
-            >
-              News
-            </button>
+            <TabButton tab="reddit" label="Reddit" />
+            <TabButton tab="news" label="News" />
+            <TabButton tab="copilot" label="Trading Copilot">
+              <div className="flex items-center space-x-2">
+                <Image
+                  src="/robot-icon.png"
+                  alt="Trading Copilot Robot"
+                  width={30}
+                  height={30}
+                />
+                <span>Trading Copilot</span>
+              </div>
+            </TabButton>
           </div>
         </div>
         {activeTab === "reddit" && (
@@ -66,6 +82,11 @@ export default function StockDetail() {
         {activeTab === "news" && (
           <div>
             <NewsPage />
+          </div>
+        )}
+        {activeTab === "copilot" && (
+          <div>
+            <TradingCopilot />
           </div>
         )}
       </div>
