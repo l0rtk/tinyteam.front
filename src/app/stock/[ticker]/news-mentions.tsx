@@ -51,7 +51,7 @@ export default function NewsPage() {
 
   useEffect(() => {
     const additionalTickers = searchParams.get("additionalTickers");
-    const limit = searchParams.get("limit") || "100";
+    const limit = searchParams.get("limit") || "20";
     const tickers = additionalTickers
       ? `${ticker},${additionalTickers}`
       : ticker;
