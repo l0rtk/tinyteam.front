@@ -22,7 +22,7 @@ interface NewsArticle {
   ticker: string[];
   title: string;
   description: string;
-  url: string;
+  article_url: string;
   published_utc: string;
   source: string;
   image_url: string;
@@ -255,7 +255,7 @@ export default function NewsPage() {
               )}
               <p className="text-gray-300">{selectedArticle?.description}</p>
               <a
-                href={selectedArticle?.url}
+                href={selectedArticle?.article_url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-400 hover:text-blue-300"
