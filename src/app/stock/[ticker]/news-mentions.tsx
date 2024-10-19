@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useSearchParams } from "next/navigation";
+import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,6 +24,7 @@ interface NewsArticle {
   url: string;
   published_utc: string;
   source: string;
+  image_url: string;
   insights: {
     [key: string]: {
       sentiment: string;
@@ -53,7 +55,7 @@ export default function NewsPage() {
 
     ws.onopen = () => {
       console.log("WebSocket connection established");
-      ws.send("Request update"); // Send any message to request an update
+      ws.send("Request update");
     };
 
     ws.onmessage = (event) => {
@@ -84,7 +86,7 @@ export default function NewsPage() {
       if (ws.readyState === WebSocket.OPEN) {
         ws.send("Request update");
       }
-    }, 60000); // Request updates every minute
+    }, 60000);
 
     return () => {
       clearInterval(intervalId);
@@ -105,15 +107,24 @@ export default function NewsPage() {
     return formatDistanceToNow(date, { addSuffix: true });
   };
 
+  const handleImageError = (
+    e: React.SyntheticEvent<HTMLImageElement, Event>
+  ) => {
+    e.currentTarget.src = "/placeholder.svg?height=96&width=96";
+  };
+
   const renderNewsArticles = () => {
     if (isLoading) {
       return Array(5)
         .fill(0)
         .map((_, index) => (
-          <li key={index} className="border-b pb-4 last:border-b-0">
-            <Skeleton className="h-6 w-3/4 mb-2" />
-            <Skeleton className="h-4 w-1/2 mb-2" />
-            <Skeleton className="h-4 w-full" />
+          <li key={index} className="border-b pb-4 last:border-b-0 flex">
+            <Skeleton className="h-24 w-24 mr-4" />
+            <div className="flex-1">
+              <Skeleton className="h-6 w-3/4 mb-2" />
+              <Skeleton className="h-4 w-1/2 mb-2" />
+              <Skeleton className="h-4 w-full" />
+            </div>
           </li>
         ));
     }
@@ -127,20 +138,32 @@ export default function NewsPage() {
     }
 
     return newsArticles.map((article) => (
-      <li key={article.id} className="border-b pb-4 last:border-b-0">
-        <h3 className="font-semibold text-lg">
-          <Button
-            variant="link"
-            className="p-0 h-auto font-semibold text-lg text-left"
-            onClick={() => openArticleModal(article)}
-          >
-            {article.title}
-          </Button>
-        </h3>
-        <p className="text-sm text-muted-foreground">
-          {article.source} - {formatRelativeTime(article.published_utc)}
-        </p>
-        <p className="text-sm mt-2">{article.description}</p>
+      <li key={article.id} className="border-b pb-4 last:border-b-0 flex">
+        <div className="mr-4 flex-shrink-0">
+          <Image
+            src={article.image_url || "/placeholder.svg?height=96&width=96"}
+            alt={article.title}
+            width={96}
+            height={96}
+            className="object-cover rounded"
+            onError={handleImageError}
+          />
+        </div>
+        <div className="flex-1">
+          <h3 className="font-semibold text-lg">
+            <Button
+              variant="link"
+              className="p-0 h-auto font-semibold text-lg text-left"
+              onClick={() => openArticleModal(article)}
+            >
+              {article.title}
+            </Button>
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            {article.source} - {formatRelativeTime(article.published_utc)}
+          </p>
+          <p className="text-sm mt-2">{article.description}</p>
+        </div>
       </li>
     ));
   };
@@ -166,11 +189,24 @@ export default function NewsPage() {
             <DialogDescription>
               {selectedArticle?.source} -{" "}
               {selectedArticle &&
-                formatRelativeTime(selectedArticle.publishedAt)}
+                formatRelativeTime(selectedArticle.published_utc)}
             </DialogDescription>
           </DialogHeader>
           <ScrollArea className="max-h-[60vh]">
             <div className="space-y-4">
+              {selectedArticle && (
+                <Image
+                  src={
+                    selectedArticle.image_url ||
+                    "/placeholder.svg?height=200&width=400"
+                  }
+                  alt={selectedArticle.title}
+                  width={400}
+                  height={200}
+                  className="object-cover rounded w-full"
+                  onError={handleImageError}
+                />
+              )}
               <p>{selectedArticle?.description}</p>
               <a
                 href={selectedArticle?.url}
