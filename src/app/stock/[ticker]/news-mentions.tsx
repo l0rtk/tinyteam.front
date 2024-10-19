@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
+import { formatDistanceToNow } from "date-fns";
 
 interface NewsArticle {
   id: string;
@@ -20,7 +21,7 @@ interface NewsArticle {
   title: string;
   description: string;
   url: string;
-  publishedAt: string;
+  published_utc: string;
   source: string;
   insights: {
     [key: string]: {
@@ -96,6 +97,14 @@ export default function NewsPage() {
     setIsModalOpen(true);
   };
 
+  const formatRelativeTime = (dateString: string) => {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      return "Invalid Date";
+    }
+    return formatDistanceToNow(date, { addSuffix: true });
+  };
+
   const renderNewsArticles = () => {
     if (isLoading) {
       return Array(5)
@@ -129,8 +138,7 @@ export default function NewsPage() {
           </Button>
         </h3>
         <p className="text-sm text-muted-foreground">
-          {article.source} -{" "}
-          {new Date(article.publishedAt).toLocaleDateString()}
+          {article.source} - {formatRelativeTime(article.published_utc)}
         </p>
         <p className="text-sm mt-2">{article.description}</p>
       </li>
@@ -158,7 +166,7 @@ export default function NewsPage() {
             <DialogDescription>
               {selectedArticle?.source} -{" "}
               {selectedArticle &&
-                new Date(selectedArticle.publishedAt).toLocaleDateString()}
+                formatRelativeTime(selectedArticle.publishedAt)}
             </DialogDescription>
           </DialogHeader>
           <ScrollArea className="max-h-[60vh]">
