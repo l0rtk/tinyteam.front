@@ -10,13 +10,8 @@ import {
   ResponsiveContainer,
   Legend,
   Tooltip,
-  Label,
 } from "recharts";
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
+import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 import {
   Select,
   SelectContent,
@@ -76,6 +71,7 @@ export default function SentimentPieChart() {
         );
         setData(response.data);
         setLoading(false);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {
         setError("Failed to fetch sentiment data");
         setLoading(false);
@@ -129,7 +125,6 @@ export default function SentimentPieChart() {
       ]
     : [];
 
-  const total = chartData.reduce((sum, item) => sum + item.value, 0);
   const COLORS = [
     "hsl(142, 76%, 36%)",
     "hsl(var(--destructive))",
@@ -143,8 +138,8 @@ export default function SentimentPieChart() {
     innerRadius,
     outerRadius,
     percent,
-    index,
-  }: any) => {
+  }: // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  any) => {
     const RADIAN = Math.PI / 180;
     const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
     const x = cx + radius * Math.cos(-midAngle * RADIAN);
