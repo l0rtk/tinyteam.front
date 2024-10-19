@@ -7,7 +7,8 @@ import Link from "next/link";
 import SentimentChart from "./sentiment-chart";
 import SentimentPieChart from "./sentiment-pie-chart";
 import RedditMentions from "./reddit-mentions";
-import NewsMentions from "./news-mentions";
+// import { NewsMentions } from "./news-mentions";
+import NewsPage from "./news-mentions";
 
 export default function StockDetail() {
   const { ticker } = useParams();
@@ -64,7 +65,7 @@ export default function StockDetail() {
         )}
         {activeTab === "news" && (
           <div>
-            <NewsMentions />
+            <NewsPage />
           </div>
         )}
       </div>

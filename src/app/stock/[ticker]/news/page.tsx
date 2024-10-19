@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useSearchParams } from "next/navigation";
-import { Card, CardContent } from "@/components/ui/card";
+import Link from "next/link";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -46,7 +47,9 @@ export default function NewsPage() {
       ? `${ticker},${additionalTickers}`
       : ticker;
 
-    const wsUrl = `ws://localhost:8000/news/ws/ticker_news?tickers=${tickers}&limit=${limit}`;
+    // const wsUrl = `ws://localhost:8000/ws/ticker_news?tickers=${tickers}&limit=${limit}`;
+    const wsUrl =
+      "ws://localhost:8000/news/ws/ticker_news?tickers=AAPL&limit=100";
     console.log(wsUrl);
     const ws = new WebSocket(wsUrl);
 
@@ -96,12 +99,31 @@ export default function NewsPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <div className="container mx-auto p-4">
+        <Link
+          href={`/stock/${ticker}`}
+          className="text-primary hover:underline mb-4 inline-block"
+        >
+          &larr; Back to Stock Detail
+        </Link>
         <Card className="w-full mb-4">
           <CardContent className="flex items-center justify-between p-6">
-            <h1 className="text-3xl font-bold text-primary">Latest News</h1>
+            <h1 className="text-3xl font-bold text-primary">
+              {ticker} - Latest News
+            </h1>
+            <div className="flex space-x-4">
+              <Link href={`/stock/${ticker}/reddit`}>
+                <Button variant="secondary">Reddit</Button>
+              </Link>
+              <Link href={`/stock/${ticker}/news`}>
+                <Button variant="default">News</Button>
+              </Link>
+            </div>
           </CardContent>
         </Card>
         <Card>
+          <CardHeader>
+            <CardTitle>Latest News</CardTitle>
+          </CardHeader>
           <CardContent>
             {newsArticles.length === 0 ? (
               <p className="text-center text-muted-foreground">
