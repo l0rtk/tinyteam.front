@@ -60,7 +60,7 @@ export default function TradingCopilot() {
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/llm/chat/", {
+      const response = await fetch("http://13.60.224.198:8000/llm/chat/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
