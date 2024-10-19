@@ -27,7 +27,7 @@ export default function StockComparison() {
           tickers.map((ticker) =>
             axios
               .get<{ results: StockDetails }>(
-                `http://localhost:8000/tickers/stock_details/${ticker}`
+                `http://13.60.224.198:8000/tickers/stock_details/${ticker}`
               )
               .then((response) => response.data.results)
           )

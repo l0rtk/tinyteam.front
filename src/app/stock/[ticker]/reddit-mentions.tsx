@@ -61,7 +61,7 @@ export default function RedditMentions() {
     const keywords = tickerKeywords[ticker.toUpperCase()]?.join(",") || ticker;
 
     const ws = new WebSocket(
-      `ws://localhost:8000/posts/ws/keyword_posts?keywords=${encodeURIComponent(
+      `ws://13.60.224.198:8000/posts/ws/keyword_posts?keywords=${encodeURIComponent(
         keywords.toLowerCase()
       )}`
     );

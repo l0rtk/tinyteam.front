@@ -65,7 +65,7 @@ export default function SentimentPieChart() {
 
       try {
         const response = await axios.get<SentimentData>(
-          `http://localhost:8000/sentiments/sentiment_pie_chart?keywords=${encodeURIComponent(
+          `http://13.60.224.198:8000/sentiments/sentiment_pie_chart?keywords=${encodeURIComponent(
             keywords
           )}&aggregation_type=minutes&start_time=${getStartTime(timeRange)}`
         );

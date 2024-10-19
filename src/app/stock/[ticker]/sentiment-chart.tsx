@@ -64,7 +64,7 @@ export default function SentimentChartComponent() {
 
       try {
         const response = await axios.get<SentimentData[]>(
-          `http://localhost:8000/sentiments/sentiment_aggregation?keywords=${encodeURIComponent(
+          `http://13.60.224.198:8000/sentiments/sentiment_aggregation?keywords=${encodeURIComponent(
             keywords
           )}&aggregation_type=${timeGranularity}`
         );

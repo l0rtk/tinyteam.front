@@ -6,7 +6,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 
 interface RedditPost {
@@ -47,7 +53,7 @@ export function RedditMentionsComponent() {
     const keywords = tickerKeywords[ticker.toUpperCase()]?.join(",") || ticker;
 
     const ws = new WebSocket(
-      `ws://localhost:8000/posts/ws/keyword_posts?keywords=${encodeURIComponent(
+      `ws://13.60.224.198:8000/posts/ws/keyword_posts?keywords=${encodeURIComponent(
         keywords.toLowerCase()
       )}`
     );
@@ -72,7 +78,9 @@ export function RedditMentionsComponent() {
     }
 
     if (sentimentFilter !== "all") {
-      result = result.filter((post) => post.sentiment_label === sentimentFilter);
+      result = result.filter(
+        (post) => post.sentiment_label === sentimentFilter
+      );
     }
 
     if (subredditFilter !== "all") {
@@ -104,7 +112,9 @@ export function RedditMentionsComponent() {
     });
   };
 
-  const uniqueSubreddits = Array.from(new Set(posts.map((post) => post.subreddit)));
+  const uniqueSubreddits = Array.from(
+    new Set(posts.map((post) => post.subreddit))
+  );
 
   const ticker = Array.isArray(params.ticker)
     ? params.ticker[0]
