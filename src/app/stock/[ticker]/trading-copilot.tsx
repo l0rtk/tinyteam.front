@@ -10,6 +10,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 interface Message {
   role: "user" | "assistant";
   content: string;
+  specify?: boolean;
 }
 
 interface ApiResponse {
@@ -61,19 +62,16 @@ export default function StockDetail() {
       const data = await response.json();
       const parsedResponse: ApiResponse = JSON.parse(data.response);
 
+      const assistantMessage: Message = {
+        role: "assistant",
+        content: parsedResponse.message,
+        specify: parsedResponse.specify,
+      };
+      setMessages((prevMessages) => [...prevMessages, assistantMessage]);
+
       if (parsedResponse.id === "specify_needed" && parsedResponse.specify) {
         setSpecifyResponse(parsedResponse);
-        const assistantMessage: Message = {
-          role: "assistant",
-          content: parsedResponse.message,
-        };
-        setMessages((prevMessages) => [...prevMessages, assistantMessage]);
       } else {
-        const assistantMessage: Message = {
-          role: "assistant",
-          content: parsedResponse.message,
-        };
-        setMessages((prevMessages) => [...prevMessages, assistantMessage]);
         setSpecifyResponse(null);
       }
     } catch (error) {
@@ -102,6 +100,8 @@ export default function StockDetail() {
                 className={`mb-2 p-2 rounded-lg ${
                   message.role === "user"
                     ? "bg-primary text-primary-foreground ml-auto"
+                    : message.specify === false
+                    ? "bg-green-500 text-white"
                     : "bg-secondary"
                 } max-w-[80%] ${
                   message.role === "user" ? "ml-auto" : "mr-auto"
