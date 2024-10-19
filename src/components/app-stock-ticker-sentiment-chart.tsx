@@ -3,8 +3,21 @@
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
 import axios from "axios";
 
 interface SentimentData {
@@ -28,18 +41,23 @@ export function SentimentChartComponent() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const ticker = Array.isArray(params.ticker) ? params.ticker[0] : params.ticker;
+      const ticker = Array.isArray(params.ticker)
+        ? params.ticker[0]
+        : params.ticker;
       if (!ticker) {
         setError("No ticker provided");
         setLoading(false);
         return;
       }
 
-      const keywords = tickerKeywords[ticker.toUpperCase()]?.join(",") || ticker;
+      const keywords =
+        tickerKeywords[ticker.toUpperCase()]?.join(",") || ticker;
 
       try {
         const response = await axios.get<SentimentData[]>(
-          `http://localhost:8000/sentiments/sentiment_aggregation?keywords=${encodeURIComponent(keywords)}&aggregation_type=hourly`
+          `http://localhost:8000/sentiments/sentiment_aggregation?keywords=${encodeURIComponent(
+            keywords
+          )}&aggregation_type=hourly`
         );
         setData(response.data);
         setLoading(false);
@@ -89,7 +107,6 @@ export function SentimentChartComponent() {
               color: "hsl(var(--chart-3))",
             },
           }}
-          className="h-[300px]"
         >
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data}>
@@ -101,9 +118,24 @@ export function SentimentChartComponent() {
               <YAxis />
               <ChartTooltip content={<ChartTooltipContent />} />
               <Legend />
-              <Line type="monotone" dataKey="positives" stroke="var(--color-positives)" name="Positive" />
-              <Line type="monotone" dataKey="negatives" stroke="var(--color-negatives)" name="Negative" />
-              <Line type="monotone" dataKey="neutrals" stroke="var(--color-neutrals)" name="Neutral" />
+              <Line
+                type="monotone"
+                dataKey="positives"
+                stroke="var(--color-positives)"
+                name="Positive"
+              />
+              <Line
+                type="monotone"
+                dataKey="negatives"
+                stroke="var(--color-negatives)"
+                name="Negative"
+              />
+              <Line
+                type="monotone"
+                dataKey="neutrals"
+                stroke="var(--color-neutrals)"
+                name="Neutral"
+              />
             </LineChart>
           </ResponsiveContainer>
         </ChartContainer>

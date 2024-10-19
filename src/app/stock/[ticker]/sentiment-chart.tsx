@@ -97,7 +97,7 @@ export default function SentimentChart() {
   }
 
   return (
-    <Card className="w-full h-[400px]">
+    <Card className="w-full">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Sentiment Analysis</CardTitle>
         <Select
@@ -131,7 +131,6 @@ export default function SentimentChart() {
               color: "hsl(var(--chart-3))",
             },
           }}
-          className="h-[300px]"
         >
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data}>
