@@ -26,10 +26,15 @@ interface NewsArticle {
   published_utc: string;
   source: string;
   image_url: string;
+  ticker_sentiment: {
+    sentiment: string;
+    sentiment_reasoning: string;
+  };
   insights: {
     [key: string]: {
+      ticker: string;
       sentiment: string;
-      reasoning: string;
+      sentiment_reasoning: string;
     };
   };
 }
@@ -196,9 +201,7 @@ export default function NewsPage() {
                 {article.title}
               </Button>
             </h3>
-            {getSentimentLabel(
-              article.insights[ticker]?.sentiment || "neutral"
-            )}
+            {getSentimentLabel(article.ticker_sentiment.sentiment)}
           </div>
           <p className="text-sm text-gray-400">
             {article.source} - {formatRelativeTime(article.published_utc)}
@@ -269,12 +272,12 @@ export default function NewsPage() {
                     >
                       <div className="flex items-center justify-between">
                         <h5 className="font-medium text-white">
-                          {insightTicker}
+                          {insight.ticker}
                         </h5>
                         {getSentimentLabel(insight.sentiment)}
                       </div>
                       <p className="text-gray-300 mt-1">
-                        Reasoning: {insight.reasoning}
+                        Reasoning: {insight.sentiment_reasoning}
                       </p>
                     </div>
                   )
