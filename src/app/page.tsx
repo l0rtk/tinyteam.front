@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import axios from "axios";
 import Image from "next/image";
@@ -92,12 +91,6 @@ export default function StockComparison() {
                     <CardHeader>
                       <CardTitle className="flex justify-between items-center">
                         <span>{stock.ticker}</span>
-                        <Badge
-                          variant="secondary"
-                          className="text-secondary-foreground"
-                        >
-                          {stock.currency_name.toUpperCase()}
-                        </Badge>
                       </CardTitle>
                       <p className="text-sm text-muted-foreground">
                         {stock.name}
