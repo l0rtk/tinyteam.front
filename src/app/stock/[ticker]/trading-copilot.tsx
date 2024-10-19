@@ -17,16 +17,22 @@ interface Message {
 
 interface ApiResponse {
   id: string;
+  action?: string;
+  target?: string;
+  condition?: string;
+  quantity?: string;
+  timeFrame?: string;
+  specify: boolean;
+  message: string;
+}
+
+interface Job {
+  id: string;
   action: string;
   target: string;
   condition: string;
   quantity: string;
   timeFrame: string;
-  specify: boolean;
-  message?: string;
-}
-
-interface Job extends ApiResponse {
   status: string;
   createdAt: string;
 }
@@ -70,24 +76,26 @@ export default function TradingCopilot() {
       }
 
       const data = await response.json();
-      const parsedResponse: ApiResponse = data.response;
+      const parsedResponse: ApiResponse =
+        typeof data.response === "string"
+          ? JSON.parse(data.response)
+          : data.response;
 
       const assistantMessage: Message = {
         role: "assistant",
-        content: parsedResponse.specify
-          ? "Please provide more details..."
-          : "Job created successfully!",
+        content: parsedResponse.message,
         specify: parsedResponse.specify,
       };
       setMessages((prevMessages) => [...prevMessages, assistantMessage]);
 
       if (!parsedResponse.specify) {
-        const jobData =
-          typeof parsedResponse === "string"
-            ? JSON.parse(parsedResponse)
-            : parsedResponse;
         const newJob: Job = {
-          ...jobData,
+          id: parsedResponse.id,
+          action: parsedResponse.action || "",
+          target: parsedResponse.target || "",
+          condition: parsedResponse.condition || "",
+          quantity: parsedResponse.quantity || "",
+          timeFrame: parsedResponse.timeFrame || "",
           status: "pending",
           createdAt: new Date().toISOString(),
         };
@@ -125,9 +133,9 @@ export default function TradingCopilot() {
                         className={`mb-2 p-2 rounded-lg ${
                           message.role === "user"
                             ? "bg-primary text-primary-foreground ml-auto"
-                            : message.specify === false
-                            ? "bg-green-500 text-white"
-                            : "bg-secondary"
+                            : message.specify
+                            ? "bg-secondary Text-white"
+                            : "Text-white"
                         } max-w-[80%] ${
                           message.role === "user" ? "ml-auto" : "mr-auto"
                         }`}
@@ -171,7 +179,7 @@ export default function TradingCopilot() {
                       jobs.map((job) => (
                         <Card key={job.id} className="mb-4">
                           <CardContent className="pt-4">
-                            <div className="flex justify-between items-start mb-2">
+                            <div className="m-3 flex justify-between items-start mb-2">
                               <h3 className="font-semibold text-lg">
                                 {job.id}
                               </h3>
@@ -185,19 +193,28 @@ export default function TradingCopilot() {
                                 {job.status}
                               </Badge>
                             </div>
-                            <p>
-                              <strong>Action:</strong> {job.action}
+                            <p className="m-3">
+                              <strong>Action:</strong>{" "}
+                              <Button
+                                className={`text-sm px-4 py-1 min-w-[50px] ${
+                                  job.action.toLowerCase() === "sell"
+                                    ? "bg-red-500 hover:bg-red-600"
+                                    : "bg-green-500 hover:bg-green-600"
+                                }`}
+                              >
+                                {job.action}
+                              </Button>
                             </p>
-                            <p>
+                            <p className="m-3">
                               <strong>Target:</strong> {job.target}
                             </p>
-                            <p>
+                            <p className="m-3">
                               <strong>Condition:</strong> {job.condition}
                             </p>
-                            <p>
+                            <p className="m-3">
                               <strong>Quantity:</strong> {job.quantity}
                             </p>
-                            <p>
+                            <p className="m-3">
                               <strong>Time Frame:</strong> {job.timeFrame}
                             </p>
                             <p className="text-sm text-muted-foreground mt-2">
