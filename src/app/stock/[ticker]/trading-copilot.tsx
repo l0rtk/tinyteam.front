@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 
 interface Message {
   role: "user" | "assistant";
@@ -16,24 +17,25 @@ interface Message {
 
 interface ApiResponse {
   id: string;
+  action: string;
+  target: string;
+  condition: string;
+  quantity: string;
+  timeFrame: string;
   specify: boolean;
-  message: string;
+  message?: string;
 }
 
-interface Job {
-  id: string;
-  description: string;
+interface Job extends ApiResponse {
+  status: string;
   createdAt: string;
 }
 
-export default function StockDetail() {
+export default function TradingCopilot() {
   const { ticker } = useParams();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [specifyResponse, setSpecifyResponse] = useState<ApiResponse | null>(
-    null
-  );
   const [jobs, setJobs] = useState<Job[]>([]);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
@@ -68,29 +70,29 @@ export default function StockDetail() {
       }
 
       const data = await response.json();
-      const parsedResponse: ApiResponse = JSON.parse(data.response);
+      const parsedResponse: ApiResponse = data.response;
 
       const assistantMessage: Message = {
         role: "assistant",
-        content: parsedResponse.message,
+        content: parsedResponse.specify
+          ? "Please provide more details..."
+          : "Job created successfully!",
         specify: parsedResponse.specify,
       };
       setMessages((prevMessages) => [...prevMessages, assistantMessage]);
 
-      console.log(parsedResponse);
-      if (parsedResponse.id === "specify_needed" && parsedResponse.specify) {
-        setSpecifyResponse(parsedResponse);
-      } else {
-        setSpecifyResponse(null);
-        if (parsedResponse.specify === false) {
-          const newJob: Job = {
-            id: Date.now().toString(),
-            description: parsedResponse.message,
-            createdAt: new Date().toISOString(),
-          };
-          setJobs((prevJobs) => [...prevJobs, newJob]);
-          console.log("Job created:", newJob);
-        }
+      if (!parsedResponse.specify) {
+        const jobData =
+          typeof parsedResponse === "string"
+            ? JSON.parse(parsedResponse)
+            : parsedResponse;
+        const newJob: Job = {
+          ...jobData,
+          status: "pending",
+          createdAt: new Date().toISOString(),
+        };
+        setJobs((prevJobs) => [...prevJobs, newJob]);
+        console.log("Job created:", newJob);
       }
     } catch (error) {
       console.error("Error:", error);
@@ -144,11 +146,7 @@ export default function StockDetail() {
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
                       onKeyPress={(e) => e.key === "Enter" && sendMessage()}
-                      placeholder={
-                        specifyResponse
-                          ? "Please provide more details..."
-                          : `Ask about ${ticker} stock...`
-                      }
+                      placeholder={`Ask about ${ticker} stock...`}
                       disabled={isLoading}
                     />
                     <Button onClick={sendMessage} disabled={isLoading}>
@@ -173,8 +171,35 @@ export default function StockDetail() {
                       jobs.map((job) => (
                         <Card key={job.id} className="mb-4">
                           <CardContent className="pt-4">
-                            <p className="font-semibold">Job ID: {job.id}</p>
-                            <p>{job.description}</p>
+                            <div className="flex justify-between items-start mb-2">
+                              <h3 className="font-semibold text-lg">
+                                {job.id}
+                              </h3>
+                              <Badge
+                                variant={
+                                  job.status === "pending"
+                                    ? "secondary"
+                                    : "default"
+                                }
+                              >
+                                {job.status}
+                              </Badge>
+                            </div>
+                            <p>
+                              <strong>Action:</strong> {job.action}
+                            </p>
+                            <p>
+                              <strong>Target:</strong> {job.target}
+                            </p>
+                            <p>
+                              <strong>Condition:</strong> {job.condition}
+                            </p>
+                            <p>
+                              <strong>Quantity:</strong> {job.quantity}
+                            </p>
+                            <p>
+                              <strong>Time Frame:</strong> {job.timeFrame}
+                            </p>
                             <p className="text-sm text-muted-foreground mt-2">
                               Created:{" "}
                               {new Date(job.createdAt).toLocaleString()}
