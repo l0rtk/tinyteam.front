@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import RedditMentions from "./reddit-mentions";
 import SentimentChart from "./sentiment-chart";
+import SentimentPieChart from "./sentiment-pie-chart";
 
 export default function StockDetail() {
   const { ticker } = useParams();
@@ -23,9 +24,14 @@ export default function StockDetail() {
             <h1 className="text-4xl font-bold text-primary">{ticker}</h1>
           </CardContent>
         </Card>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <SentimentChart />
-          <RedditMentions />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div className="lg:col-span-2 space-y-4">
+            <SentimentChart />
+            <SentimentPieChart />
+          </div>
+          <div className="lg:col-span-1">
+            <RedditMentions />
+          </div>
         </div>
       </div>
     </div>

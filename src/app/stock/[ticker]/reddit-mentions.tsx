@@ -129,7 +129,7 @@ export default function RedditMentions() {
     : params.ticker;
 
   return (
-    <Card className="w-full h-[calc(100vh-4rem)]">
+    <Card className="w-full">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Reddit Live Mentions for {ticker}</CardTitle>
         <div className="flex items-center">
