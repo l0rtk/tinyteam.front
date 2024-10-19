@@ -18,12 +18,12 @@ export default function StockDetail() {
         >
           &larr; Back to Comparison
         </Link>
-        <div className="grid grid-cols-1 gap-4">
-          <Card className="w-full">
-            <CardContent className="flex items-center justify-center p-6">
-              <h1 className="text-4xl font-bold text-primary">{ticker}</h1>
-            </CardContent>
-          </Card>
+        <Card className="w-full mb-4">
+          <CardContent className="flex items-center justify-center p-6">
+            <h1 className="text-4xl font-bold text-primary">{ticker}</h1>
+          </CardContent>
+        </Card>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <SentimentChart />
           <RedditMentions />
         </div>

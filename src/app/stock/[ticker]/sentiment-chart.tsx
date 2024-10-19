@@ -17,6 +17,13 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import axios from "axios";
 
 interface SentimentData {
@@ -37,6 +44,9 @@ export default function SentimentChart() {
   const [data, setData] = useState<SentimentData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [timeGranularity, setTimeGranularity] = useState<"hourly" | "minutes">(
+    "hourly"
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -56,7 +66,7 @@ export default function SentimentChart() {
         const response = await axios.get<SentimentData[]>(
           `http://localhost:8000/sentiments/sentiment_aggregation?keywords=${encodeURIComponent(
             keywords
-          )}&aggregation_type=hourly`
+          )}&aggregation_type=${timeGranularity}`
         );
         setData(response.data);
         setLoading(false);
@@ -68,7 +78,7 @@ export default function SentimentChart() {
     };
 
     fetchData();
-  }, [params.ticker]);
+  }, [params.ticker, timeGranularity]);
 
   if (loading) {
     return (
@@ -88,8 +98,22 @@ export default function SentimentChart() {
 
   return (
     <Card className="w-full h-[400px]">
-      <CardHeader>
+      <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Sentiment Analysis</CardTitle>
+        <Select
+          value={timeGranularity}
+          onValueChange={(value: "hourly" | "minutes") =>
+            setTimeGranularity(value)
+          }
+        >
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select time granularity" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="hourly">Hourly</SelectItem>
+            <SelectItem value="minutes">Minutes</SelectItem>
+          </SelectContent>
+        </Select>
       </CardHeader>
       <CardContent>
         <ChartContainer
