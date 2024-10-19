@@ -15,6 +15,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatDistanceToNow } from "date-fns";
+import { ThumbsUp, ThumbsDown, Minus } from "lucide-react";
 
 interface NewsArticle {
   id: string;
@@ -113,18 +114,50 @@ export default function NewsPage() {
     e.currentTarget.src = "/placeholder.svg?height=96&width=96";
   };
 
+  const getSentimentLabel = (sentiment: string) => {
+    const sentimentLower = sentiment.toLowerCase();
+    let icon, bgColor;
+
+    switch (sentimentLower) {
+      case "positive":
+        icon = <ThumbsUp className="h-3 w-3" />;
+        bgColor = "bg-green-500";
+        break;
+      case "negative":
+        icon = <ThumbsDown className="h-3 w-3" />;
+        bgColor = "bg-red-500";
+        break;
+      default:
+        icon = <Minus className="h-3 w-3" />;
+        bgColor = "bg-yellow-600";
+    }
+
+    return (
+      <div
+        className={`flex items-center gap-1 px-2 py-1 rounded text-xs text-white ${bgColor}`}
+      >
+        {icon}
+        <span className="capitalize">{sentimentLower}</span>
+      </div>
+    );
+  };
+
   const renderNewsArticles = () => {
     if (isLoading) {
       return Array(5)
         .fill(0)
         .map((_, index) => (
-          <li key={index} className="border-b pb-4 last:border-b-0 flex">
+          <li
+            key={index}
+            className="border-b border-gray-700 pb-4 last:border-b-0 flex"
+          >
             <Skeleton className="h-24 w-24 mr-4" />
             <div className="flex-1">
               <Skeleton className="h-6 w-3/4 mb-2" />
               <Skeleton className="h-4 w-1/2 mb-2" />
               <Skeleton className="h-4 w-full" />
             </div>
+            <Skeleton className="h-6 w-20 ml-4" />
           </li>
         ));
     }
@@ -138,7 +171,10 @@ export default function NewsPage() {
     }
 
     return newsArticles.map((article) => (
-      <li key={article.id} className="border-b pb-4 last:border-b-0 flex">
+      <li
+        key={article.id}
+        className="border-b border-gray-700 pb-4 last:border-b-0 flex items-start"
+      >
         <div className="mr-4 flex-shrink-0">
           <Image
             src={article.image_url || "/placeholder.svg?height=96&width=96"}
@@ -150,43 +186,50 @@ export default function NewsPage() {
           />
         </div>
         <div className="flex-1">
-          <h3 className="font-semibold text-lg">
-            <Button
-              variant="link"
-              className="p-0 h-auto font-semibold text-lg text-left"
-              onClick={() => openArticleModal(article)}
-            >
-              {article.title}
-            </Button>
-          </h3>
-          <p className="text-sm text-muted-foreground">
+          <div className="flex justify-between items-start">
+            <h3 className="font-semibold text-lg">
+              <Button
+                variant="link"
+                className="p-0 h-auto font-semibold text-lg text-left text-blue-400 hover:text-blue-300"
+                onClick={() => openArticleModal(article)}
+              >
+                {article.title}
+              </Button>
+            </h3>
+            {getSentimentLabel(
+              article.insights[ticker]?.sentiment || "neutral"
+            )}
+          </div>
+          <p className="text-sm text-gray-400">
             {article.source} - {formatRelativeTime(article.published_utc)}
           </p>
-          <p className="text-sm mt-2">{article.description}</p>
+          <p className="text-sm mt-2 text-gray-300">{article.description}</p>
         </div>
       </li>
     ));
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-[#0a0a0a] text-gray-100">
       <div className="container mx-auto p-4">
-        <Card className="w-full mb-4">
+        <Card className="w-full mb-4 bg-[#1a1a1a] border-gray-700">
           <CardContent className="flex items-center justify-between p-6">
-            <h1 className="text-3xl font-bold text-primary">Latest News</h1>
+            <h1 className="text-3xl font-bold text-white">Latest News</h1>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="bg-[#1a1a1a] border-gray-700">
           <CardContent>
             <ul className="space-y-4">{renderNewsArticles()}</ul>
           </CardContent>
         </Card>
       </div>
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="max-w-3xl">
+        <DialogContent className="max-w-3xl bg-[#1a1a1a] text-gray-100">
           <DialogHeader>
-            <DialogTitle>{selectedArticle?.title}</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-white">
+              {selectedArticle?.title}
+            </DialogTitle>
+            <DialogDescription className="text-gray-400">
               {selectedArticle?.source} -{" "}
               {selectedArticle &&
                 formatRelativeTime(selectedArticle.published_utc)}
@@ -207,23 +250,32 @@ export default function NewsPage() {
                   onError={handleImageError}
                 />
               )}
-              <p>{selectedArticle?.description}</p>
+              <p className="text-gray-300">{selectedArticle?.description}</p>
               <a
                 href={selectedArticle?.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary hover:underline"
+                className="text-blue-400 hover:text-blue-300"
               >
                 Read full article
               </a>
-              <h4 className="font-semibold">Insights:</h4>
+              <h4 className="font-semibold text-white">Insights:</h4>
               {selectedArticle &&
                 Object.entries(selectedArticle.insights).map(
-                  ([ticker, insight]) => (
-                    <div key={ticker} className="border-t pt-2">
-                      <h5 className="font-medium">{ticker}</h5>
-                      <p>Sentiment: {insight.sentiment}</p>
-                      <p>Reasoning: {insight.reasoning}</p>
+                  ([insightTicker, insight]) => (
+                    <div
+                      key={insightTicker}
+                      className="border-t border-gray-700 pt-2"
+                    >
+                      <div className="flex items-center justify-between">
+                        <h5 className="font-medium text-white">
+                          {insightTicker}
+                        </h5>
+                        {getSentimentLabel(insight.sentiment)}
+                      </div>
+                      <p className="text-gray-300 mt-1">
+                        Reasoning: {insight.reasoning}
+                      </p>
                     </div>
                   )
                 )}
